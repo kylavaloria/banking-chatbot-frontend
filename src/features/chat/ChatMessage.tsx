@@ -1,12 +1,24 @@
 import type { ChatMessage as ChatMessageType } from '../../types/chat.types';
+import { TicketCards } from './TicketCard';
 
 interface ChatMessageProps {
   message: ChatMessageType;
 }
 
+const TICKET_RESPONSE_MODES = new Set([
+  'ticket_confirmation',
+  'critical_action_confirmation',
+  'multi_issue_confirmation',
+]);
+
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser      = message.sender === 'user';
   const isSystem    = !isUser && message.sender === 'assistant' && message.responseMode === 'system-error';
+
+  const showTickets = !isUser &&
+    message.responseMode !== null &&
+    TICKET_RESPONSE_MODES.has(message.responseMode) &&
+    message.tickets && message.tickets.length > 0;
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group`}>
@@ -34,6 +46,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
         >
           {message.text}
         </div>
+
+        {showTickets && (
+          <TicketCards
+            tickets={message.tickets!}
+            responseMode={message.responseMode}
+          />
+        )}
 
         {/* Metadata below bubble */}
         <div className="flex items-center gap-2 mt-1 px-1">

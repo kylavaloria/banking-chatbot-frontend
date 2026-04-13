@@ -33,6 +33,7 @@ export function useChatSession() {
             text:         m.message_text,
             responseMode: m.response_mode ?? null,
             timestamp:    new Date(m.created_at),
+            tickets:      [],
           }));
 
         setMessages(historical);
@@ -80,6 +81,7 @@ export function useChatSession() {
         text:         response.reply,
         responseMode: response.responseMode ?? null,
         timestamp:    new Date(),
+        tickets:      response.tickets ?? [],
       };
 
       setMessages(prev => [...prev, assistantMsg]);
