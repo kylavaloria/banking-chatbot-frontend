@@ -4,7 +4,9 @@ import { ChatInput } from '../features/chat/ChatInput';
 import { useChatSession } from '../features/chat/useChatSession';
 
 export default function ChatbotPage() {
-  const { messages, isLoading, send } = useChatSession();
+  const { messages, sessionId, isLoading, isLoadingHistory, error, send } = useChatSession();
+  void sessionId;
+  void error;
 
   return (
     <AppShell>
@@ -26,7 +28,11 @@ export default function ChatbotPage() {
         </div>
 
         {/* Messages */}
-        <ChatWindow messages={messages} isLoading={isLoading} />
+        <ChatWindow
+          messages={messages}
+          isLoading={isLoading}
+          isLoadingHistory={isLoadingHistory}
+        />
 
         {/* Input */}
         <ChatInput onSend={send} isLoading={isLoading} />
