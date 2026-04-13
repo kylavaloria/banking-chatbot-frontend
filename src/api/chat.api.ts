@@ -1,5 +1,5 @@
 import { apiFetch } from './client';
-import type { SendMessageResponse, CreateSessionResponse } from '../types/chat.types';
+import type { SendMessageResponse, CreateSessionResponse, TicketDetail } from '../types/chat.types';
 
 export async function createSession(): Promise<CreateSessionResponse> {
   return apiFetch<CreateSessionResponse>('/api/chat/session', {
@@ -19,12 +19,23 @@ export async function sendMessage(
 export async function getMessageHistory(): Promise<{
   sessionId: string;
   messages: Array<{
-    message_id: string;
-    sender_type: 'user' | 'assistant' | 'system';
-    message_text: string;
+    message_id:    string;
+    sender_type:   'user' | 'assistant' | 'system';
+    message_text:  string;
     response_mode: string | null;
-    created_at: string;
+    case_id:       string | null;
+    ticket_id:     string | null;
+    created_at:    string;
   }>;
 }> {
   return apiFetch('/api/chat/messages');
+}
+
+export async function getTicketsByCaseIds(
+  caseIds: string[]
+): Promise<TicketDetail[]> {
+  if (caseIds.length === 0) return [];
+  const query = caseIds.join(',');
+  const data  = await apiFetch(`/api/chat/tickets?caseIds=${encodeURIComponent(query)}`);
+  return data.tickets ?? [];
 }
