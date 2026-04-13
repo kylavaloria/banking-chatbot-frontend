@@ -15,3 +15,16 @@ export async function sendMessage(
     body: JSON.stringify({ messageText }),
   });
 }
+
+export async function getMessageHistory(): Promise<{
+  sessionId: string;
+  messages: Array<{
+    message_id: string;
+    sender_type: 'user' | 'assistant' | 'system';
+    message_text: string;
+    response_mode: string | null;
+    created_at: string;
+  }>;
+}> {
+  return apiFetch('/api/chat/messages');
+}
