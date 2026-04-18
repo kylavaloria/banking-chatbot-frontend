@@ -9,33 +9,217 @@
     box-sizing: border-box;
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     height: 100%;
-    margin: 0;
+    margin:  0;
     padding: 0;
   }
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
-    background-color: #f8fafc;
-    color: #0f172a;
+    background-color: #f7f9fb;
+    color: #191c1e;
     -webkit-font-smoothing: antialiased;
   }
 }
 
 @layer components {
-  /* Scrollbar styling */
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
+  /* ── Subtle dot-grid background ─────────────────────────────────────── */
+  .bg-dots {
+    background-image: radial-gradient(
+      circle,
+      rgba(30, 58, 138, 0.07) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
   }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
+
+  /* ── Header gradient underline ──────────────────────────────────────── */
+  .header-bar::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left:   0;
+    right:  0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      #1e3a8a   0%,
+      #2dd4bf  60%,
+      transparent 100%
+    );
+    opacity: 0.35;
   }
+
+  /* ── Zeni avatar ring ───────────────────────────────────────────────── */
+  .zeni-ring {
+    background: linear-gradient(135deg, #1e3a8a, #2dd4bf);
+    padding: 2px;
+    border-radius: 50%;
+  }
+  .zeni-ring img {
+    display: block;
+    border-radius: 50%;
+    border: 2px solid #fff;
+  }
+
+  /* ── Sign-in page: subtle animated background grid ──────────────────── */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(30, 58, 138, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30, 58, 138, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* ── Sign-in page: accent blobs ─────────────────────────────────────── */
+  .blob {
+    position:      absolute;
+    border-radius: 50%;
+    filter:        blur(80px);
+    opacity:       0.18;
+    pointer-events: none;
+  }
+
+  /* ── Sign-in page: input focus ring (portal style) ──────────────────── */
+  .portal-input:focus {
+    outline:      none;
+    border-color: #1e3a8a;
+    box-shadow:   0 0 0 4px rgba(30, 58, 138, 0.10);
+  }
+
+  /* ── Sign-in page: primary button shimmer ───────────────────────────── */
+  .btn-primary {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content:    '';
+    position:   absolute;
+    inset:      0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.18) 50%,
+      transparent 60%
+    );
+    transform:  translateX(-100%);
+    transition: transform 0.55s ease;
+  }
+  .btn-primary:hover::after { transform: translateX(100%); }
+
+  /* ── Send button shimmer ────────────────────────────────────────────── */
+  .btn-send {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-send::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 60%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.55s ease;
+  }
+  .btn-send:hover::after { transform: translateX(100%); }
+
+  /* ── Textarea focus (suppress default ring, custom ring handled outside) */
+  .chat-textarea:focus {
+    outline:    none;
+    box-shadow: none;
+  }
+
+  /* Native textarea auto-resize where supported */
+  textarea.chat-textarea { field-sizing: content; }
+
+  /* ── Ticket table: row hover + entrance animation ───────────────────── */
+  .ticket-row {
+    transition: background 0.12s ease, box-shadow 0.12s ease;
+    cursor:     pointer;
+    animation:  rowIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .ticket-row:hover { background: #f0f4ff; }
+
+  @keyframes rowIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0);  }
+  }
+
+  /* stagger the first few rows */
+  .ticket-row:nth-child(1)  { animation-delay: 0.03s; }
+  .ticket-row:nth-child(2)  { animation-delay: 0.06s; }
+  .ticket-row:nth-child(3)  { animation-delay: 0.09s; }
+  .ticket-row:nth-child(4)  { animation-delay: 0.12s; }
+  .ticket-row:nth-child(5)  { animation-delay: 0.15s; }
+  .ticket-row:nth-child(6)  { animation-delay: 0.18s; }
+  .ticket-row:nth-child(7)  { animation-delay: 0.21s; }
+  .ticket-row:nth-child(8)  { animation-delay: 0.24s; }
+  .ticket-row:nth-child(9)  { animation-delay: 0.27s; }
+  .ticket-row:nth-child(10) { animation-delay: 0.30s; }
+  .ticket-row:nth-child(n+11) { animation-delay: 0.33s; }
+
+  /* ── Portal-styled native select (caret chevron) ────────────────────── */
+  .portal-select {
+    -webkit-appearance: none;
+            appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23737686' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat:   no-repeat;
+    background-position: right 10px center;
+    padding-right: 2rem !important;
+  }
+
+  /* ── Scrollbar for the chat main area ───────────────────────────────── */
+  .chat-main::-webkit-scrollbar       { width: 5px; }
+  .chat-main::-webkit-scrollbar-track { background: transparent; }
+  .chat-main::-webkit-scrollbar-thumb {
+    background:    #c3c6d7;
+    border-radius: 99px;
+  }
+  .chat-main::-webkit-scrollbar-thumb:hover { background: #737686; }
+
+  /* ── Legacy thin scrollbar (used elsewhere) ─────────────────────────── */
+  .scrollbar-thin::-webkit-scrollbar       { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background-color: #cbd5e1;
-    border-radius: 3px;
+    border-radius:    3px;
   }
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background-color: #94a3b8;
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover { background-color: #94a3b8; }
+}
+
+@layer utilities {
+  /* ── Message / card entrance animations ─────────────────────────────── */
+  @keyframes msgSlideRight {
+    from { opacity: 0; transform: translateX( 18px); }
+    to   { opacity: 1; transform: translateX(0);    }
   }
+  @keyframes msgSlideLeft {
+    from { opacity: 0; transform: translateX(-18px); }
+    to   { opacity: 1; transform: translateX(0);    }
+  }
+  @keyframes cardReveal {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1;   transform: scale(1);    }
+    50%      { opacity: 0.5; transform: scale(1.35); }
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(22px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+  }
+
+  .msg-user     { animation: msgSlideRight 0.40s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .msg-bot      { animation: msgSlideLeft  0.40s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+  .ticket-card  { animation: cardReveal    0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both; }
+  .pulse-dot    { animation: pulse-dot 2s ease-in-out infinite; }
+  .card-animate { animation: cardIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
 }

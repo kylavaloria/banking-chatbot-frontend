@@ -1,29 +1,33 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Input } from '../components/ui/Input';
-import { Button } from '../components/ui/Button';
+
+const ZENI_AVATAR_URL =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDJQ397LjRKMGaMUiYF5NhbKF5RRij3D4vYRoqu1Hu9jChnfMlP5OStuItdEshDHu3Ts6Qi6R6ApYNboHM9T0w7dbEGJBdWJP-sqWNxZT063f3nl2pLFMxQqX-C3PmEkpXINYLxLHBnsJgJDTdlwhl98Hq6u1Ru_NNbRZVs_pVrkqmEFnPdkXJ0atH6NEPgKTUz-hcALimDdyZyJob1FwW3laObOe8RMNXnYvHewn7hx1Lz1VeRCT0gLD9RCil9BIgn3cGf6AsQWxG9';
 
 export default function SignUpPage() {
   const { signUp } = useAuth();
-  const navigate   = useNavigate();
+  const navigate = useNavigate();
 
-  const [email,    setEmail]    = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirm,  setConfirm]  = useState('');
-  const [errors,   setErrors]   = useState<{
-    email?: string; password?: string; confirm?: string; form?: string
+  const [confirm, setConfirm] = useState('');
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    confirm?: string;
+    form?: string;
   }>({});
-  const [loading,  setLoading]  = useState(false);
-  const [info,     setInfo]     = useState('');
+  const [loading, setLoading] = useState(false);
+  const [info, setInfo] = useState('');
 
   function validate(): boolean {
     const next: typeof errors = {};
-    if (!email.trim())    next.email    = 'Email is required.';
+    if (!email.trim()) next.email = 'Email is required.';
     else if (!/\S+@\S+\.\S+/.test(email)) next.email = 'Enter a valid email.';
-    if (!password)        next.password = 'Password is required.';
+    if (!password) next.password = 'Password is required.';
     else if (password.length < 8) next.password = 'Password must be at least 8 characters.';
-    if (password !== confirm)  next.confirm  = 'Passwords do not match.';
+    if (password !== confirm) next.confirm = 'Passwords do not match.';
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -39,8 +43,7 @@ export default function SignUpPage() {
       await signUp(email.trim(), password);
       navigate('/', { replace: true });
     } catch (err: any) {
-      // Supabase email confirmation case — show as info, not error
-      const msg: string = err.message ?? 'Sign up failed.';
+      const msg: string = err?.message ?? 'Sign up failed.';
       if (msg.toLowerCase().includes('confirm')) {
         setInfo(msg);
       } else {
@@ -52,104 +55,210 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-950 via-brand-800 to-brand-600 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo mark */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-white/10 backdrop-blur rounded-2xl mb-4 ring-1 ring-white/20">
-            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-              <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <h1 className="text-2xl font-bold text-white">Create your account</h1>
-          <p className="mt-1 text-brand-200 text-sm">Join the BFSI Support Portal</p>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          {info ? (
-            <div className="flex flex-col items-center gap-4 py-4 text-center">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 text-2xl">✓</span>
-              </div>
-              <p className="text-sm text-gray-700">{info}</p>
-              <Link
-                to="/login"
-                className="font-medium text-brand-600 hover:text-brand-700 text-sm transition-colors"
-              >
-                Back to sign in →
-              </Link>
+    <div className="bg-background text-on-surface min-h-screen flex flex-col">
+      {/* ── TopNavBar ── */}
+      <header className="bg-[#f7f9fb]/90 backdrop-blur-md sticky top-0 z-50 header-bar relative">
+        <div className="flex justify-between items-center w-full px-6 py-3 max-w-5xl mx-auto gap-3">
+          <div className="flex items-center gap-4">
+            <img
+              alt="Rivr Bank Logo"
+              className="h-12 md:h-14 w-auto max-w-[min(100%,14rem)] object-contain object-left"
+              src="/rivr-bank-logo.png"
+            />
+            <div className="hidden md:flex flex-col border-l border-outline-variant/40 pl-4 -mt-0.5">
+              <span className="font-bold text-sm leading-tight text-[#1e3a8a] tracking-tight">
+                Chat with Zeni
+              </span>
+              <span className="text-slate-400 font-medium text-[0.65rem] tracking-widest uppercase">
+                Customer Portal
+              </span>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-              {errors.form && (
-                <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-start gap-3">
-                  <span className="text-red-500 text-sm mt-0.5">⚠</span>
-                  <p className="text-sm text-red-700">{errors.form}</p>
-                </div>
-              )}
-
-              <Input
-                id="signup-email"
-                label="Email address"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                error={errors.email}
-                disabled={loading}
-              />
-
-              <Input
-                id="signup-password"
-                label="Password"
-                type="password"
-                placeholder="Min. 8 characters"
-                autoComplete="new-password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                error={errors.password}
-                disabled={loading}
-              />
-
-              <Input
-                id="signup-confirm-password"
-                label="Confirm password"
-                type="password"
-                placeholder="••••••••"
-                autoComplete="new-password"
-                value={confirm}
-                onChange={e => setConfirm(e.target.value)}
-                error={errors.confirm}
-                disabled={loading}
-              />
-
-              <Button
-                id="signup-submit-btn"
-                type="submit"
-                isLoading={loading}
-                size="lg"
-                className="w-full mt-1"
-              >
-                {loading ? 'Creating account…' : 'Create account'}
-              </Button>
-            </form>
-          )}
-
-          {!info && (
-            <p className="mt-6 text-center text-sm text-gray-500">
-              Already have an account?{' '}
-              <Link
-                to="/login"
-                className="font-medium text-brand-600 hover:text-brand-700 transition-colors"
-              >
-                Sign in
-              </Link>
-            </p>
-          )}
+          </div>
         </div>
-      </div>
+      </header>
+
+      {/* ── Main: centered sign-up card ── */}
+      <main className="flex-1 flex items-center justify-center px-4 py-12 relative overflow-hidden bg-grid">
+        {/* Decorative blobs */}
+        <div className="blob w-96 h-96 bg-[#1e3a8a] -top-24 -left-24" />
+        <div className="blob w-80 h-80 bg-[#2dd4bf] bottom-0 right-0" />
+
+        {/* Card */}
+        <div className="card-animate relative z-10 w-full max-w-md bg-white rounded-2xl shadow-[0px_20px_60px_rgba(25,28,30,0.10)] border border-outline-variant/20 overflow-hidden">
+          {/* Top accent bar */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-[#1e3a8a] to-[#2dd4bf]" />
+
+          <div className="px-8 pt-8 pb-9 flex flex-col gap-6">
+            {/* Card header */}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2.5 mb-3">
+                <img
+                  alt="Zeni AI Assistant"
+                  className="w-10 h-10 rounded-full object-cover border border-outline-variant/30 shadow-sm"
+                  src={ZENI_AVATAR_URL}
+                />
+                <span className="text-sm font-semibold text-on-surface">Zeni</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[0.6rem] font-bold tracking-widest uppercase bg-[#d5e3fc] text-[#1e3a8a]">
+                  AI
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold text-[#1e3a8a] leading-tight">
+                Create your account
+              </h1>
+              <p className="text-sm text-on-surface-variant">
+                Join the support portal and start chatting with Zeni.
+              </p>
+            </div>
+
+            {info ? (
+              <div className="flex flex-col items-center gap-4 py-4 text-center">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center bg-[#ccfbf1]">
+                  <span className="material-symbols-outlined text-[#0d9488] text-2xl">
+                    check_circle
+                  </span>
+                </div>
+                <p className="text-sm text-on-surface-variant">{info}</p>
+                <Link
+                  to="/login"
+                  className="text-[#1e3a8a] font-medium text-sm hover:underline underline-offset-2 transition-all inline-flex items-center gap-1"
+                >
+                  Back to sign in
+                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                </Link>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
+                {errors.form && (
+                  <div className="bg-error-container/60 border border-error/30 rounded-xl px-4 py-3 flex items-start gap-2.5">
+                    <span className="material-symbols-outlined text-error text-[1.1rem] mt-0.5">
+                      error
+                    </span>
+                    <p className="text-sm text-on-error-container">{errors.form}</p>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-4">
+                  {/* Email */}
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider"
+                      htmlFor="signup-email"
+                    >
+                      Email
+                    </label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737686] text-[1.1rem] select-none">
+                        mail
+                      </span>
+                      <input
+                        id="signup-email"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        disabled={loading}
+                        className="portal-input w-full pl-9 pr-4 py-3 rounded-xl border border-outline-variant bg-[#eceef0] text-on-surface text-sm placeholder:text-outline transition-all duration-200 disabled:opacity-60"
+                      />
+                    </div>
+                    {errors.email && (
+                      <span className="text-xs text-error mt-0.5">{errors.email}</span>
+                    )}
+                  </div>
+
+                  {/* Password */}
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider"
+                      htmlFor="signup-password"
+                    >
+                      Password
+                    </label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737686] text-[1.1rem] select-none">
+                        lock
+                      </span>
+                      <input
+                        id="signup-password"
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder="Min. 8 characters"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        disabled={loading}
+                        className="portal-input w-full pl-9 pr-4 py-3 rounded-xl border border-outline-variant bg-[#eceef0] text-on-surface text-sm placeholder:text-outline transition-all duration-200 disabled:opacity-60"
+                      />
+                    </div>
+                    {errors.password && (
+                      <span className="text-xs text-error mt-0.5">{errors.password}</span>
+                    )}
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider"
+                      htmlFor="signup-confirm-password"
+                    >
+                      Confirm Password
+                    </label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737686] text-[1.1rem] select-none">
+                        lock
+                      </span>
+                      <input
+                        id="signup-confirm-password"
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder="••••••••"
+                        value={confirm}
+                        onChange={e => setConfirm(e.target.value)}
+                        disabled={loading}
+                        className="portal-input w-full pl-9 pr-4 py-3 rounded-xl border border-outline-variant bg-[#eceef0] text-on-surface text-sm placeholder:text-outline transition-all duration-200 disabled:opacity-60"
+                      />
+                    </div>
+                    {errors.confirm && (
+                      <span className="text-xs text-error mt-0.5">{errors.confirm}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Submit button */}
+                <button
+                  id="signup-submit-btn"
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary w-full h-12 rounded-xl bg-gradient-to-br from-[#1e3a8a] to-[#2dd4bf] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-95 active:scale-[0.98] transition-all duration-150 shadow-md shadow-[#1e3a8a]/20 disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
+                >
+                  {loading ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+                      Creating account…
+                    </>
+                  ) : (
+                    <>
+                      Create Account
+                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
+
+            {!info && (
+              <p className="text-center text-sm text-on-surface-variant">
+                Already have an account?{' '}
+                <Link
+                  to="/login"
+                  className="text-[#1e3a8a] font-medium hover:underline underline-offset-2 transition-all"
+                >
+                  Sign in
+                </Link>
+              </p>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

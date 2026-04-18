@@ -36,6 +36,8 @@ export async function getTicketsByCaseIds(
 ): Promise<TicketDetail[]> {
   if (caseIds.length === 0) return [];
   const query = caseIds.join(',');
-  const data  = await apiFetch(`/api/chat/tickets?caseIds=${encodeURIComponent(query)}`);
+  const data  = await apiFetch<{ tickets?: TicketDetail[] }>(
+    `/api/chat/tickets?caseIds=${encodeURIComponent(query)}`
+  );
   return data.tickets ?? [];
 }
