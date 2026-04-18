@@ -1,46 +1,121 @@
-import { AppShell } from '../components/layout/AppShell';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { TicketTable } from '../features/ticketing/TicketTable';
 
+function firstNameFromEmail(email: string | null): string {
+  if (!email) return 'there';
+  const local = email.split('@')[0] ?? '';
+  const token = local.split(/[._-]/)[0] ?? local;
+  if (!token) return 'there';
+  return token.charAt(0).toUpperCase() + token.slice(1).toLowerCase();
+}
+
 export default function TicketingPage() {
+  const { email, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const displayName = firstNameFromEmail(email);
+
   return (
-    <AppShell>
-      <div className="flex-1 max-w-screen-xl mx-auto w-full px-6 py-8">
-        {/* Page header */}
-        <div className="mb-6">
+    <div className="bg-background text-on-surface min-h-screen flex flex-col bg-dots">
+      {/* ── Top Nav ── */}
+      <header className="bg-[#f7f9fb]/90 backdrop-blur-md sticky top-0 z-50 header-bar relative">
+        <div className="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto gap-3">
+          {/* Logo + page label */}
+          <div className="flex items-center gap-4">
+            <img
+              alt="Rivr Bank Logo"
+              className="h-12 md:h-14 w-auto max-w-[min(100%,14rem)] object-contain object-left"
+              src="/rivr-bank-logo.png"
+            />
+            <div className="hidden md:flex flex-col border-l border-outline-variant/40 pl-4 -mt-0.5">
+              <span className="font-bold text-sm leading-tight text-[#1e3a8a] tracking-tight">
+                Chat Support
+              </span>
+              <span className="text-slate-400 font-medium text-[0.65rem] tracking-widest uppercase">
+                Agent Dashboard
+              </span>
+            </div>
+          </div>
+
+          {/* Greeting + logout */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-brand-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-              </svg>
+            <div className="hidden sm:flex items-center gap-2 bg-[#f2f4f6] rounded-full px-3 py-1.5 border border-outline-variant/30">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
+              <span className="text-xs font-medium text-on-surface-variant">
+                Hi, {displayName}
+              </span>
+            </div>
+            <button
+              id="navbar-logout-btn"
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[#1e3a8a] hover:bg-[#1e3a8a]/10 transition-all duration-150 active:scale-95 text-sm font-medium"
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: '1.1rem' }}
+              >
+                logout
+              </span>
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* ── Page Content ── */}
+      <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-8 flex flex-col gap-6">
+        {/* Page header */}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1e3a8a] to-[#2dd4bf] flex items-center justify-center shadow-md shadow-[#1e3a8a]/20 flex-shrink-0">
+              <span
+                className="material-symbols-outlined text-white"
+                style={{ fontSize: '1.2rem' }}
+              >
+                confirmation_number
+              </span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">Support Queue</h1>
-              <p className="text-sm text-gray-500 mt-0.5">
+              <h1 className="text-xl font-bold text-on-surface tracking-tight">
+                Support Queue
+              </h1>
+              <p className="text-xs text-on-surface-variant">
                 Active tickets sorted by priority and wait time
               </p>
             </div>
           </div>
 
-          {/* Legend */}
-          <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" />
-              P1 Critical — Immediate action
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block" />
-              P2 Urgent — High priority
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" />
-              P3 Standard — Normal queue
-            </span>
+          {/* Priority legend */}
+          <div className="flex items-center gap-4 mt-3 flex-wrap">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-red-500" />
+              <span className="text-[0.7rem] text-on-surface-variant font-medium">
+                P1 Critical — Immediate action
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-amber-400" />
+              <span className="text-[0.7rem] text-on-surface-variant font-medium">
+                P2 Urgent — High priority
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-[#1e3a8a]" />
+              <span className="text-[0.7rem] text-on-surface-variant font-medium">
+                P3 Standard — Normal queue
+              </span>
+            </div>
           </div>
         </div>
 
         <TicketTable />
-      </div>
-    </AppShell>
+      </main>
+    </div>
   );
 }

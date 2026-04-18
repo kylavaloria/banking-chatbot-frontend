@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Input } from '../components/ui/Input';
-import { Button } from '../components/ui/Button';
+
+const ZENI_AVATAR_URL =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuDJQ397LjRKMGaMUiYF5NhbKF5RRij3D4vYRoqu1Hu9jChnfMlP5OStuItdEshDHu3Ts6Qi6R6ApYNboHM9T0w7dbEGJBdWJP-sqWNxZT063f3nl2pLFMxQqX-C3PmEkpXINYLxLHBnsJgJDTdlwhl98Hq6u1Ru_NNbRZVs_pVrkqmEFnPdkXJ0atH6NEPgKTUz-hcALimDdyZyJob1FwW3laObOe8RMNXnYvHewn7hx1Lz1VeRCT0gLD9RCil9BIgn3cGf6AsQWxG9';
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const navigate   = useNavigate();
+  const navigate = useNavigate();
 
-  const [email,    setEmail]    = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors,   setErrors]   = useState<{ email?: string; password?: string; form?: string }>({});
-  const [loading,  setLoading]  = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string; form?: string }>({});
+  const [loading, setLoading] = useState(false);
 
   function validate(): boolean {
     const next: typeof errors = {};
-    if (!email.trim())    next.email    = 'Email is required.';
+    if (!email.trim()) next.email = 'Email is required.';
     else if (!/\S+@\S+\.\S+/.test(email)) next.email = 'Enter a valid email.';
-    if (!password)        next.password = 'Password is required.';
+    if (!password) next.password = 'Password is required.';
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -30,86 +31,171 @@ export default function LoginPage() {
     setErrors({});
     try {
       await login(email.trim(), password);
-      // AuthContext sets the role; router will redirect via AuthRedirect
       navigate('/', { replace: true });
     } catch (err: any) {
-      setErrors({ form: err.message ?? 'Login failed. Please try again.' });
+      setErrors({ form: err?.message ?? 'Login failed. Please try again.' });
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand-950 via-brand-800 to-brand-600 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo mark */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-white/10 backdrop-blur rounded-2xl mb-4 ring-1 ring-white/20">
-            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-              <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd" />
-            </svg>
+    <div className="bg-background text-on-surface min-h-screen flex flex-col">
+      {/* ── TopNavBar ── */}
+      <header className="bg-[#f7f9fb]/90 backdrop-blur-md sticky top-0 z-50 header-bar relative">
+        <div className="flex justify-between items-center w-full px-6 py-3 max-w-5xl mx-auto gap-3">
+          <div className="flex items-center gap-4">
+            <img
+              alt="Rivr Bank Logo"
+              className="h-12 md:h-14 w-auto max-w-[min(100%,14rem)] object-contain object-left"
+              src="/rivr-bank-logo.png"
+            />
+            <div className="hidden md:flex flex-col border-l border-outline-variant/40 pl-4 -mt-0.5">
+              <span className="font-bold text-sm leading-tight text-[#1e3a8a] tracking-tight">
+                Chat with Zeni
+              </span>
+              <span className="text-slate-400 font-medium text-[0.65rem] tracking-widest uppercase">
+                Customer Portal
+              </span>
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-white">BFSI Support Portal</h1>
-          <p className="mt-1 text-brand-200 text-sm">Sign in to your account</p>
         </div>
+      </header>
+
+      {/* ── Main: centered sign-in card ── */}
+      <main className="flex-1 flex items-center justify-center px-4 py-12 relative overflow-hidden bg-grid">
+        {/* Decorative blobs */}
+        <div className="blob w-96 h-96 bg-[#1e3a8a] -top-24 -left-24" />
+        <div className="blob w-80 h-80 bg-[#2dd4bf] bottom-0 right-0" />
 
         {/* Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-            {errors.form && (
-              <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-start gap-3">
-                <span className="text-red-500 text-sm mt-0.5">⚠</span>
-                <p className="text-sm text-red-700">{errors.form}</p>
+        <div className="card-animate relative z-10 w-full max-w-md bg-white rounded-2xl shadow-[0px_20px_60px_rgba(25,28,30,0.10)] border border-outline-variant/20 overflow-hidden">
+          {/* Top accent bar */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-[#1e3a8a] to-[#2dd4bf]" />
+
+          <div className="px-8 pt-8 pb-9 flex flex-col gap-6">
+            {/* Card header */}
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2.5 mb-3">
+                <img
+                  alt="Zeni AI Assistant"
+                  className="w-10 h-10 rounded-full object-cover border border-outline-variant/30 shadow-sm"
+                  src={ZENI_AVATAR_URL}
+                />
+                <span className="text-sm font-semibold text-on-surface">Zeni</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[0.6rem] font-bold tracking-widest uppercase bg-[#d5e3fc] text-[#1e3a8a]">
+                  AI
+                </span>
               </div>
-            )}
+              <h1 className="text-2xl font-bold text-[#1e3a8a] leading-tight">Welcome back</h1>
+              <p className="text-sm text-on-surface-variant">
+                Sign in to continue to your support portal.
+              </p>
+            </div>
 
-            <Input
-              id="login-email"
-              label="Email address"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              error={errors.email}
-              disabled={loading}
-            />
+            {/* Form */}
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
+              {errors.form && (
+                <div className="bg-error-container/60 border border-error/30 rounded-xl px-4 py-3 flex items-start gap-2.5">
+                  <span className="material-symbols-outlined text-error text-[1.1rem] mt-0.5">
+                    error
+                  </span>
+                  <p className="text-sm text-on-error-container">{errors.form}</p>
+                </div>
+              )}
 
-            <Input
-              id="login-password"
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              autoComplete="current-password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              error={errors.password}
-              disabled={loading}
-            />
+              <div className="flex flex-col gap-4">
+                {/* Email */}
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider"
+                    htmlFor="email"
+                  >
+                    Email
+                  </label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737686] text-[1.1rem] select-none">
+                      mail
+                    </span>
+                    <input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      disabled={loading}
+                      className="portal-input w-full pl-9 pr-4 py-3 rounded-xl border border-outline-variant bg-[#eceef0] text-on-surface text-sm placeholder:text-outline transition-all duration-200 disabled:opacity-60"
+                    />
+                  </div>
+                  {errors.email && (
+                    <span className="text-xs text-error mt-0.5">{errors.email}</span>
+                  )}
+                </div>
 
-            <Button
-              id="login-submit-btn"
-              type="submit"
-              isLoading={loading}
-              size="lg"
-              className="w-full mt-1"
-            >
-              {loading ? 'Signing in…' : 'Sign in'}
-            </Button>
-          </form>
+                {/* Password */}
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider"
+                    htmlFor="password"
+                  >
+                    Password
+                  </label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#737686] text-[1.1rem] select-none">
+                      lock
+                    </span>
+                    <input
+                      id="password"
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      disabled={loading}
+                      className="portal-input w-full pl-9 pr-4 py-3 rounded-xl border border-outline-variant bg-[#eceef0] text-on-surface text-sm placeholder:text-outline transition-all duration-200 disabled:opacity-60"
+                    />
+                  </div>
+                  {errors.password && (
+                    <span className="text-xs text-error mt-0.5">{errors.password}</span>
+                  )}
+                </div>
+              </div>
 
-          <p className="mt-6 text-center text-sm text-gray-500">
-            Don't have an account?{' '}
-            <Link
-              to="/signup"
-              className="font-medium text-brand-600 hover:text-brand-700 transition-colors"
-            >
-              Create one
-            </Link>
-          </p>
+              {/* Sign In button */}
+              <button
+                id="login-submit-btn"
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full h-12 rounded-xl bg-gradient-to-br from-[#1e3a8a] to-[#2dd4bf] text-white font-semibold text-sm flex items-center justify-center gap-2 hover:opacity-95 active:scale-[0.98] transition-all duration-150 shadow-md shadow-[#1e3a8a]/20 disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
+              >
+                {loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
+                    Signing in…
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Create account link */}
+            <p className="text-center text-sm text-on-surface-variant">
+              Don't have an account?{' '}
+              <Link
+                to="/signup"
+                className="text-[#1e3a8a] font-medium hover:underline underline-offset-2 transition-all"
+              >
+                Create one
+              </Link>
+            </p>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
