@@ -1,11 +1,14 @@
-import { useState } from 'react';
 import type { TicketView } from '../../types/ticket.types';
 import { CustomerBlock } from './CustomerBlock';
+import { EmotionBadge } from '../agent/EmotionBadge';
+import { TicketConversation } from '../agent/TicketConversation';
 import { formatDate, modeLabel, priorityLabel, statusLabel, truncateId } from '../../utils/formatters';
 
 interface TicketRowProps {
-  ticket: TicketView;
-  index:  number;
+  ticket:     TicketView;
+  index:      number;
+  isExpanded: boolean;
+  onToggle:   (ticketId: string) => void;
 }
 
 function priorityChip(priority: TicketView['ticket_priority']) {
@@ -73,16 +76,14 @@ function CardBlockCell({ status }: { status: TicketView['card_block_status'] }) 
   );
 }
 
-export function TicketRow({ ticket, index }: TicketRowProps) {
-  const [expanded, setExpanded] = useState(false);
-
+export function TicketRow({ ticket, isExpanded, onToggle }: TicketRowProps) {
   return (
     <>
       {/* Main row */}
       <tr
         id={`ticket-row-${ticket.ticket_id}`}
         className="ticket-row"
-        onClick={() => setExpanded(prev => !prev)}
+        onClick={() => onToggle(ticket.ticket_id)}
       >
         <td className="px-4 py-3.5 whitespace-nowrap">{priorityChip(ticket.ticket_priority)}</td>
         <td className="px-4 py-3.5 text-xs text-on-surface-variant">
@@ -108,12 +109,17 @@ export function TicketRow({ ticket, index }: TicketRowProps) {
           <CardBlockCell status={ticket.card_block_status} />
         </td>
         <td className="px-4 py-3.5 whitespace-nowrap">{statusChip(ticket.status)}</td>
+        <td className="px-4 py-3.5 whitespace-nowrap">
+          {ticket.emotion_label
+            ? <EmotionBadge label={ticket.emotion_label} intensity={ticket.emotion_intensity} />
+            : <span className="text-xs text-on-surface-variant/40">—</span>}
+        </td>
         <td className="px-4 py-3.5 text-[0.65rem] text-on-surface-variant whitespace-nowrap">
           {formatDate(ticket.created_at)}
         </td>
         <td className="px-4 py-3.5">
           <span
-            className={`material-symbols-outlined text-on-surface-variant/40 hover:text-[#1e3a8a] transition-all duration-200 inline-block ${expanded ? 'rotate-90 text-[#1e3a8a]' : ''}`}
+            className={`material-symbols-outlined text-on-surface-variant/40 hover:text-[#1e3a8a] transition-all duration-200 inline-block ${isExpanded ? 'rotate-90 text-[#1e3a8a]' : ''}`}
             style={{ fontSize: '1rem' }}
           >
             chevron_right
@@ -122,10 +128,12 @@ export function TicketRow({ ticket, index }: TicketRowProps) {
       </tr>
 
       {/* Expanded detail row */}
-      {expanded && (
+      {isExpanded && (
         <tr className="bg-[#f7f9fb]">
-          <td colSpan={9} className="px-6 py-5 border-t border-outline-variant/20">
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <td colSpan={10} className="border-t border-outline-variant/20">
+            {/* ── Ticket metadata section ── */}
+            <div className="px-6 py-5">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               {/* Customer */}
               <div>
                 <h3 className="text-[0.65rem] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
@@ -208,6 +216,17 @@ export function TicketRow({ ticket, index }: TicketRowProps) {
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+            </div>
+
+            {/* ── Conversation History section ── */}
+            <div className="border-t border-outline-variant/20 px-6 pb-5 pt-4">
+              <h3 className="text-[0.65rem] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+                Conversation History
+              </h3>
+              <div className="overflow-y-auto" style={{ maxHeight: '400px' }}>
+                <TicketConversation ticketId={ticket.ticket_id} />
               </div>
             </div>
           </td>

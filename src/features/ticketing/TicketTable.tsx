@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { TicketFilters } from './TicketFilters';
 import { TicketRow } from './TicketRow';
 import { useTickets } from './useTickets';
@@ -18,6 +19,12 @@ export function TicketTable() {
     setPriorityFilter,
     setStatusFilter,
   } = useTickets();
+
+  const [expandedTicketId, setExpandedTicketId] = useState<string | null>(null);
+
+  const handleRowClick = (ticketId: string) => {
+    setExpandedTicketId(prev => (prev === ticketId ? null : ticketId));
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -67,7 +74,7 @@ export function TicketTable() {
       {!isLoading && !error && tickets.length > 0 && (
         <div className="bg-white rounded-2xl border border-outline-variant/20 shadow-[0px_8px_28px_rgba(25,28,30,0.06)] overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full min-w-[1100px] text-sm border-collapse">
               <thead>
                 <tr className="border-b border-outline-variant/20 bg-[#f2f4f6]">
                   <th className={TH_CLASS}>Priority</th>
@@ -77,13 +84,20 @@ export function TicketTable() {
                   <th className={TH_CLASS}>Case Summary</th>
                   <th className={TH_CLASS}>Card Block</th>
                   <th className={TH_CLASS}>Status</th>
+                  <th className={TH_CLASS}>Emotion</th>
                   <th className={TH_CLASS}>Created</th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant/10">
                 {tickets.map((ticket, i) => (
-                  <TicketRow key={ticket.ticket_id} ticket={ticket} index={i} />
+                  <TicketRow
+                    key={ticket.ticket_id}
+                    ticket={ticket}
+                    index={i}
+                    isExpanded={expandedTicketId === ticket.ticket_id}
+                    onToggle={handleRowClick}
+                  />
                 ))}
               </tbody>
             </table>

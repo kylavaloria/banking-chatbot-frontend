@@ -1,3 +1,13 @@
+export interface ConversationMessage {
+  message_id:        string;
+  sender_type:       'user' | 'assistant';
+  message_text:      string;
+  response_mode:     string | null;
+  emotion_label:     string | null;
+  emotion_intensity: string | null;
+  created_at:        string;
+}
+
 export interface TicketView {
   ticket_id:          string;
   issue_type:         string;
@@ -12,4 +22,6 @@ export interface TicketView {
   customer_email:     string;
   customer_mobile:    string | null;
   customer_segment:   string | null;
+  emotion_label?:     string | null;
+  emotion_intensity?: string | null;
 }
