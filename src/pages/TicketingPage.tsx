@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { TicketTable } from '../features/ticketing/TicketTable';
 
@@ -25,7 +25,7 @@ export default function TicketingPage() {
     <div className="bg-background text-on-surface min-h-screen flex flex-col bg-dots">
       {/* ── Top Nav ── */}
       <header className="bg-[#f7f9fb]/90 backdrop-blur-md sticky top-0 z-50 header-bar relative">
-        <div className="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto gap-3">
+        <div className="flex justify-between items-center w-full px-6 py-3 max-w-[1600px] mx-auto gap-3">
           {/* Logo + page label */}
           <div className="flex items-center gap-4">
             <img
@@ -43,8 +43,16 @@ export default function TicketingPage() {
             </div>
           </div>
 
-          {/* Greeting + logout */}
+          {/* Nav links + user */}
           <div className="flex items-center gap-3">
+            {/* Analytics link */}
+            <Link
+              to="/analytics"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-[#1e3a8a] transition-all duration-150 text-sm font-medium"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>analytics</span>
+              <span className="hidden sm:inline">Analytics</span>
+            </Link>
             <div className="hidden sm:flex items-center gap-2 bg-[#f2f4f6] rounded-full px-3 py-1.5 border border-outline-variant/30">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" />
               <span className="text-xs font-medium text-on-surface-variant">
@@ -69,7 +77,7 @@ export default function TicketingPage() {
       </header>
 
       {/* ── Page Content ── */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-8 flex flex-col gap-6">
+      <main className="flex-1 w-full max-w-[1600px] mx-auto px-6 py-8 flex flex-col gap-6">
         {/* Page header */}
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-3">

@@ -2,10 +2,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { RoleGuard } from '../components/auth/RoleGuard';
 import { Spinner } from '../components/ui/Spinner';
-import LoginPage    from '../pages/LoginPage';
-import SignUpPage   from '../pages/SignUpPage';
-import ChatbotPage  from '../pages/ChatbotPage';
+import LoginPage     from '../pages/LoginPage';
+import SignUpPage    from '../pages/SignUpPage';
+import ChatbotPage   from '../pages/ChatbotPage';
 import TicketingPage from '../pages/TicketingPage';
+import AnalyticsPage from '../pages/AnalyticsPage';
 
 /** Redirects authenticated users to their role's home page, or to /login. */
 function AuthRedirect() {
@@ -48,6 +49,14 @@ export function AppRouter() {
         element={
           <RoleGuard role="agent">
             <TicketingPage />
+          </RoleGuard>
+        }
+      />
+      <Route
+        path="/analytics"
+        element={
+          <RoleGuard role="agent">
+            <AnalyticsPage />
           </RoleGuard>
         }
       />
