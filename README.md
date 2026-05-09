@@ -55,14 +55,14 @@ A pre-triaged support queue and analytics suite for bank agents.
 ```mermaid
 flowchart TD
     A([Visit /]) --> B{Auth State}
-    B -->|No token| C[/login]
-    B -->|Customer| D[/chat]
-    B -->|Agent| E[/tickets]
+    B -->|No token| C[login]
+    B -->|Customer| D[chat]
+    B -->|Agent| E[tickets]
 
     C --> F[LoginPage]
     D --> G[ChatbotPage]
     E --> H[TicketingPage]
-    H2[/analytics] --> I[AnalyticsPage]
+    J[analytics] --> I[AnalyticsPage]
 
     G -- RoleGuard: customer --> G
     H -- RoleGuard: agent --> H
