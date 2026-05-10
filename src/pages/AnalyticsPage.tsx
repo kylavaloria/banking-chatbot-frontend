@@ -232,7 +232,7 @@ function EmotionTab({ data, days, onRetry }: {
                   {pieData.map(entry => <Cell key={entry.emotion} fill={EMOTION_COLORS[entry.emotion] ?? '#6B7280'} />)}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number, name: string) => [`${value} messages`, `${EMOTION_EMOJI[name] ?? ''} ${toTitleCase(name)}`]}
+                  formatter={(value: unknown, name: unknown) => [`${value} messages`, `${EMOTION_EMOJI[String(name)] ?? ''} ${toTitleCase(String(name))}`]}
                   contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }}
                 />
                 <Legend formatter={(value: string) => `${EMOTION_EMOJI[value] ?? ''} ${toTitleCase(value)}`} iconType="circle" iconSize={10} />
@@ -251,7 +251,7 @@ function EmotionTab({ data, days, onRetry }: {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="date" tickFormatter={formatAxisDate} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} />
                 <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} width={28} />
-                <Tooltip labelFormatter={formatAxisDate} formatter={(value: number, name: string) => [`${value} messages`, `${EMOTION_EMOJI[name] ?? ''} ${toTitleCase(name)}`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
+                <Tooltip labelFormatter={(label: unknown) => formatAxisDate(String(label))} formatter={(value: unknown, name: unknown) => [`${value} messages`, `${EMOTION_EMOJI[String(name)] ?? ''} ${toTitleCase(String(name))}`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
                 <Legend formatter={(value: string) => `${EMOTION_EMOJI[value] ?? ''} ${toTitleCase(value)}`} iconType="circle" iconSize={10} />
                 {ALL_EMOTIONS.map(em => (
                   <Line key={em} type="monotone" dataKey={em} stroke={EMOTION_COLORS[em]} strokeWidth={2} dot={{ r: 3, fill: EMOTION_COLORS[em] }} activeDot={{ r: 5 }} />
@@ -271,7 +271,7 @@ function EmotionTab({ data, days, onRetry }: {
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                 <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} />
                 <YAxis type="category" dataKey="issue_type" width={210} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} />
-                <Tooltip formatter={(value: number, name: string) => [`${value} messages`, `${EMOTION_EMOJI[name] ?? ''} ${toTitleCase(name)}`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
+                <Tooltip formatter={(value: unknown, name: unknown) => [`${value} messages`, `${EMOTION_EMOJI[String(name)] ?? ''} ${toTitleCase(String(name))}`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
                 <Legend formatter={(value: string) => `${EMOTION_EMOJI[value] ?? ''} ${toTitleCase(value)}`} iconType="circle" iconSize={10} />
                 {ALL_EMOTIONS.map(em => (
                   <Bar key={em} dataKey={em} stackId="stack" fill={EMOTION_COLORS[em]} radius={em === 'neutral' ? [0, 4, 4, 0] : undefined} />
@@ -363,7 +363,7 @@ function OperationsTab({ data, days }: { data: OperationsAnalyticsResponse; days
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis dataKey="date" tickFormatter={formatAxisDate} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} />
                     <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} width={28} />
-                    <Tooltip labelFormatter={formatAxisDate} formatter={(value: number, name: string) => [`${value} tickets`, name]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
+                    <Tooltip labelFormatter={(label: unknown) => formatAxisDate(String(label))} formatter={(value: unknown, name: unknown) => [`${value} tickets`, `${name}`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
                     <Legend iconType="circle" iconSize={10} />
                     {(['P1', 'P2', 'P3'] as const).map(p => (
                       <Line key={p} type="monotone" dataKey={p} stroke={PRIORITY_COLORS[p]} strokeWidth={2} dot={{ r: 3, fill: PRIORITY_COLORS[p] }} activeDot={{ r: 5 }} />
@@ -386,7 +386,7 @@ function OperationsTab({ data, days }: { data: OperationsAnalyticsResponse; days
                       <Pie data={statusData} dataKey="value" cx="50%" cy="48%" innerRadius={60} outerRadius={90} paddingAngle={2}>
                         {statusData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                       </Pie>
-                      <Tooltip formatter={(value: number, name: string) => [`${value} tickets`, name]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
+                      <Tooltip formatter={(value: unknown, name: unknown) => [`${value} tickets`, `${name}`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
                       <Legend iconType="circle" iconSize={10} />
                     </PieChart>
                   </ResponsiveContainer>
@@ -414,7 +414,7 @@ function OperationsTab({ data, days }: { data: OperationsAnalyticsResponse; days
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                   <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} />
                   <YAxis type="category" dataKey="label" width={210} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} />
-                  <Tooltip formatter={(value: number) => [`${value} tickets`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
+                  <Tooltip formatter={(value: unknown) => [`${value} tickets`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
                   <Bar dataKey="count" fill="#1e3a8a" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -431,7 +431,7 @@ function OperationsTab({ data, days }: { data: OperationsAnalyticsResponse; days
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                   <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} />
                   <YAxis type="category" dataKey="label" width={140} tick={{ fontSize: 11, fill: '#737686' }} axisLine={false} tickLine={false} />
-                  <Tooltip formatter={(value: number) => [`${value} responses`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
+                  <Tooltip formatter={(value: unknown) => [`${value} responses`]} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 13 }} />
                   <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                     {responseModeData.map((entry, i) => <Cell key={i} fill={modeColor(entry.mode)} />)}
                   </Bar>
