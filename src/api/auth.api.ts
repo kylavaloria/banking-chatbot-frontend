@@ -1,4 +1,4 @@
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config/env';
+import { API_BASE_URL, SUPABASE_URL, SUPABASE_ANON_KEY } from '../config/env';
 
 interface SupabaseTokenResponse {
   access_token: string;
@@ -64,7 +64,7 @@ export async function signUpWithSupabase(
 }
 
 export async function getMe(token: string): Promise<MeResponse> {
-  const res = await fetch('/api/me', {
+  const res = await fetch(`${API_BASE_URL}/api/me`, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,

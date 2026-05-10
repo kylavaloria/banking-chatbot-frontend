@@ -1,11 +1,11 @@
-const BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+import { API_BASE_URL } from '../config/env';
 
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
   const token = localStorage.getItem('bfsi_token');
-  const res = await fetch(`${BASE}${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
